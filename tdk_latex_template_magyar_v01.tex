@@ -1,0 +1,385 @@
+%a dokumentum alapformázása: A4-es oldal, 12-es betűméret, egy oldalas, memoir class
+\documentclass[a4paper, oneside, 12pt]{memoir}
+
+
+
+%Hasznos package-ek betöltése:
+\usepackage{graphicx}
+
+
+
+
+%A margók, sorköz, formázás és oldalszámozás stílusának beállítása (a margó 3 cm, ha kötésben van[amennyiben így készül a lenti értékeket módosítani kell!], egyébként 2.5, másfeles sorköz, oldalszámozás a lap alján középen, ):
+\usepackage[left=2.5 cm, right=2.5 cm, top=2.54 cm]{geometry}
+\OnehalfSpacing
+\usepackage{ragged2e}
+\pagestyle{plain}
+
+
+%Times New Roman [legalábbis ahhoz nagyon hasonló betűtípus] és magyar nyelv beállítása (a magyar elválasztáshoz kell, de a program nem fogja mindíg jó tudni, bizonyos esetekben meg kellhet adni a szavaknál azokat a helyeket, ahol elválaszthatja, ehhez a szó megfelelő pontjain a \- "puha elválasztójelet" kell használni, ha meg szeretnénk tiltani a szó elválasztását, akkor azt az \mbox{} parancs argumentumába kell tenni):
+\usepackage{mathptmx}
+\usepackage[T1]{fontenc}
+%SZÜKSÉG VAN ERRE????????:
+%\def\magyarOptions{defaults=hu-min}
+\usepackage[magyar, english]{babel}
+\usepackage[utf8]{inputenc}
+
+
+%A kötés oldalának adatainak megadása(dolgozat típusa[TDK/DIPLOMAMUNKA], dolgozat beadójának neve, beadás dátuma):
+%Amennyiben nem TDK-, hanem DIPLOMAMUNKA, akkor a TDK DOLGOZAT helyére ezt kell beírni!
+\usepackage{textpos}
+\newcommand{\thesistype}[1][TDK DOLGOZAT]{#1}
+
+%A címoldal adatainak megadása:
+%először az egyetem nevét és a tanszéket kell megadni, a lenti parancs megfeleő részeit ki kell egészíteni(amennyiben egy tanszék valamely osztályán készült a munka, akkor egy további sorba kell azt megadni, az új sort a \\ jel jelöli):
+\newcommand{\unianddepartment}[1][{\Large Állatorvostudományi Egyetem\\XY Tanszék}]{#1}
+%majd meg kell adni a dolgozat címét, hasonló módon, mint fentebb:
+\newcommand{\thesistitle}[1][XY című dolgozat]{#1}
+%A következő a hallgató neve:
+\newcommand{\student}[1][{\large Készítette:}\\XY]{#1}
+%végül pedig a témavezető(k) neve(i) és beosztása(ik) következik(nek) (amennyiben több témavezető van, akkor értelemszerűen módosítani kell!)
+\newcommand{\teacher}[1][{\large Témavezető:}\\XY\\{\small Állatorvostudományi Egyetem, XY Tanszék,}\\{\small egyetemi tanár}]{#1}
+
+
+
+%a tartalomjegyzék nevének megváltoztatása (az alapértelmezett Contents-ről):
+\addto\captionsenglish{\renewcommand*{\contentsname}{Tartalomjegyzék}}
+%A tartalomjegyzék soraiban a pontozás beállítása:
+\renewcommand{\cftchapterdotsep}{\cftdotsep}
+
+
+%A fejezetek címének formázásához meg kell hívni a titlesec csomagot:
+\usepackage{titlesec}
+%Ezután be kell álltani a formázást, hogy a fejezet címe és a számozás látszódjon csak, illetve a szám után legyen pont:
+\titleformat{\chapter}{\huge\normalfont\bfseries}{\thechapter}{1em}{}
+%A fejezetek, szekciók, stb. száma után helyezett pont beállítása:
+\renewcommand{\thechapter}{\arabic{chapter}.}
+\renewcommand{\thesection}{\thechapter\arabic{section}.}
+
+
+%Az irodalomjegyzék elkészítése:
+%Első lépés a megfelelő könyvtár meghívása, illetve a stílus beállítása, jelenleg a szövegközi hivatkozásnak a Harvard módszer szertinti van beállítva, numerikussá a citestyle=numeric módosításával állítható. Amennyiben 1 vagy 2 szerző tartozik egy forráshoz, akkor azok mind megjelennek, ennél több esetén csak az első:
+\usepackage[language = auto, autolang = hyphen, isbn = false, doi = false, eprint = false, hyperref = false, citestyle=authoryear, mincitenames=1,  maxcitenames=2, bibstyle = authoryear, giveninits = true, maxbibnames = 99, dashed = false,  backend=biber, natbib = true, eventdate = comp, dateabbrev = false]{biblatex}
+%Az authoryear szövegközi hivatkozás forma megváltoztatása, hogy a név és az év közé egy vessző kerüljön[amennyiben számozott a hivatkozás erre a részre nincsen szükség]:
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+%Három szerző esetén az autómatikus et al. helyére és mtsai.-t helyezünk. Amennyiben az et al.-t szeretnénk meghagyni, akkor ez a rész kitörölhető, vagy elé %-ot írva kikommentelhető:
+\DefineBibliographyStrings{english}{andothers={és\addabbrvspace mtsai\adddot}}
+%Két szerző esetén a közöttük elhelyezett and-et és-re cseréljük:
+\renewcommand*\finalnamedelim{\addspace és\space}
+%Amennyiben azonos szerzőnek azonos évben több munkájára is történik hivatkozás, akkor azok automatikusan el lesznek különítve az kis betűkkel [az irodalomjegyzékben történő megjelenésük sorrendjében]
+%Ha egy helyen két vagy több műre is történik hivatkozás, akkor azokat a \parencite{} zárójelébe vesszővel elválasztva írva, a szövegben egy zárójelen belül, pontosvesszővel elválasztva fog megjelenni a hivatkozás
+%Amennyiben a szerző hiányzik a shortauthor mezőbe be lehet írnia a címnek azon részét, általában az első szavát, amely a szerző helyén jelenjen meg a szövegközi hivatkozásban.
+%A következő lépés a .bib fájl meghvása
+\addbibresource{pelda_hivatkozasok.bib}
+%A továbbiakban a szövegben az egyes irodalmak hivatkozását a zárójelben használva a \parencite{} paranccsal tudunk hivatkozni[ez zárójelbe teszi a teljes hivatkozást {ez numerikus forma esetén szögletes zárójelet használ}, amennyiben csak az évszámot szeretnénk megjeleníteni, akkor a parencite*{} parancsot kell használni]
+% Ha a szerző neve megjelenik a szövegben, akkor utána csak az évszámot kell zárójelben beírni. Ebben az esetben a (\citeyear{}) paranccsal csak az évszámot jeleníthetjük meg. 
+%Amennyiben egy cikkre a szövegközben nem történt hivatkozás, az nem jelenik meg az irodalomjegyzékben
+
+
+%Az irodalomjegyzékben mindenhol a kereszt- és vezetéknevek sorrendjének beállítása:
+\DeclareNameAlias{sortname}{family-given}
+\DeclareNameAlias{default}{family-given}
+%Az utolsó név előtti és eltávolítása:
+\AtBeginBibliography{
+\renewcommand*{\finalnamedelim}{{\addcomma}{\space}}
+}
+%Az évszám elé vesző helyezése:
+\DeclareDelimFormat[bib, biblist]{nameyeardelim}{\addcomma\space}
+%Az évszám zárójelének eltávolítása:
+\renewbibmacro*{date+extrayear}{
+\iffieldundef{year}{}
+{
+\addcomma\space
+\printtext{\printdateextra}
+}
+}
+%Az évszám után kettőspont elhelyezése:
+\DeclareDelimFormat[bib, biblist]{nametitledelim}{\addcolon\space}
+%A cím idézőjelek nélküli megjelenítése:
+\DeclareFieldFormat[article, inbook, inproceedings, patent, thesis, unpublished]{title}{#1\isdot}
+%A dáumok formázásának beállítása:
+
+
+%A folyóiratcikk hivatkozások további beállításai:
+%A folyóiratcím előtti In: eltüntetése:
+\renewbibmacro{in:}{
+\ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+%A folyóirat nevének nem dőltbetűssé alakítása:
+\DeclareFieldFormat{journaltitle}{#1\adddot}
+%A folyóirat évfolyama és száma utáni pont és space beállítása:
+\renewbibmacro*{volume+number+eid}{
+\printfield{volume}
+\setunit*{\adddot\addspace}
+\printfield{number}
+\setunit{\addperiod\addspace}
+\printfield{eid}
+}
+%Az oldalszámot megelőző pont beállítása:
+\renewcommand*{\bibpagespunct}{\addperiod\addspace}
+%A fenti módosítás következtében a pagina-t jelölő p.-k nagy betűként jelennek meg, ennek a kisbetűssé alakítása:
+\DefineBibliographyStrings{english}{
+page = {\lowercase{p}.},
+pages = {\lowercase{p}p.}
+}
+%A szerkesztők neve utáni eds. rövidítés zárójelbe helyezése, illetve az ezt megelőző vessző eltüntetése:
+\DeclareDelimFormat{editortypedelim}{\addspace}
+\DeclareDelimFormat{translatortypedelim}{\addspace}
+\DeclareFieldFormat{editortype}{\mkbibparens{#1}}
+\DeclareFieldFormat{translatortype}{\mkbibparens{#1}}
+
+
+%A könyv hivatkozások további beállításai:
+%A könyvcím (illetve a konferenciacím) nem döltbetűssé alakítása:
+\DeclareFieldFormat[book, proceedings]{title}{#1}
+%A kiadás helye és a kiadó közötti kettőspont vesszőre változtatása:
+\renewbibmacro*{publisher+location+date}{
+\printlist{location}
+\iflistundef{publisher}
+{\setunit*{\addcomma\space}}
+{\setunit*{\addcomma\space}}
+\printlist{publisher}
+\setunit*{\addcomma\space}
+\usebibmacro{date}
+\newunit}
+%A KÖNYV RÉSZÉNEK ÉS A KIADÁS SZÁMÁNAK FELCSERÉLÉSE...KELL??:
+ 
+
+%A könyvfejezet hivatkozások további beállításai:
+%A szerkesztők neve utáni (ed.)/(eds.) beállítása:
+\renewbibmacro*{byeditor+others}{
+  \ifnameundef{editor}
+    {}
+    {\printnames[byeditor]{editor}
+     \addcomma\addspace
+     \usebibmacro{editorstrg}
+     \clearname{editor}
+     \newunit}
+  \usebibmacro{byeditorx}
+  \usebibmacro{bytranslator+others}
+ }
+%A könyvfejezet dokumentumtípus In: utáni részén a szerkesztők és szerzők cím elé helyezése és az utánuk következő kettőspont beállítása:
+\DeclareBibliographyDriver{inbook}{
+  \newunit
+  \usebibmacro{bibindex}
+  \usebibmacro{begentry}
+  \usebibmacro{author/translator+others}
+  \setunit{\addcolon\addspace}\newblock
+  \usebibmacro{title}
+  \newunit
+  \printlist{language}
+  \newunit\newblock
+  \usebibmacro{byauthor}
+  \newunit\newblock
+  \usebibmacro{in:}
+  \setunit{\addspace}
+  \usebibmacro{bybookauthor}
+  \usebibmacro{byeditor+others}
+  \setunit{\addcolon\addspace}\newblock
+  \usebibmacro{maintitle+booktitle}
+  \newunit\newblock
+  \printfield{edition}
+  \newunit
+  \iffieldundef{maintitle}
+    {\printfield{volume}
+     \printfield{part}}
+    {}
+  \newunit
+  \printfield{volumes}
+  \newunit\newblock
+  \usebibmacro{series+number}
+  \newunit\newblock
+  \printfield{note}
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}
+  \newunit\newblock
+  \usebibmacro{chapter+pages}
+  \newunit\newblock
+  \usebibmacro{pageref}
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}
+     \usebibmacro{related}}
+    {}
+  \usebibmacro{finentry}}
+
+%A konferenciakiadvány (@Proceedings dokumentumtípus) hivatkozások további beállításai:
+%A konferencia helyszínének és az időpontjának megfordítása (időpont-helyszín), illetve a zárójel eltávolítása:
+\renewbibmacro*{event+venue+date}{
+\printfield{eventtitle}
+\newunit
+\printfield{eventtitleaddon}
+\newunit
+\printeventdate
+\setunit*{\addcomma\space}
+\printfield{venue}
+\newunit}
+%A DÁTUM FORMÁZÁSÁNAK A BEÁLLÍTÁSA:
+
+
+%A konferenciaelőadás (@InProceedings dokumentumtípus) hivatkozások további beállításai:
+%A konferenciakötet szerzőinek áthelyezése a cím elé az In: utánra, illetve a kettő közötti kettőspont beállítása:
+\DeclareBibliographyDriver{inproceedings}{
+  \usebibmacro{bibindex}
+  \usebibmacro{begentry}
+  \usebibmacro{author/translator+others}
+  \setunit{\addcolon\addspace}\newblock
+  \usebibmacro{title}
+  \newunit
+  \printlist{language}
+  \newunit\newblock
+  \usebibmacro{byauthor}
+  \newunit\newblock
+  \usebibmacro{in:}
+  \setunit{\addspace}
+  \usebibmacro{byeditor+others}
+  \setunit{\addcolon\addspace}\newblock
+  \usebibmacro{maintitle+booktitle}
+  \newunit\newblock
+  \iffieldundef{maintitle}
+    {\printfield{volume}
+     \printfield{part}}
+    {}
+  \newunit
+  \usebibmacro{event+venue+date}
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}
+  \newunit\newblock
+  \usebibmacro{chapter+pages}
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}
+     \usebibmacro{related}}
+    {}
+  \usebibmacro{finentry}
+}
+
+
+%Az url-ek hivatkozásban történő elhelyezésének további beállításai:
+%A megtekintés időpontjának zárójel nélkülivé alakítása, illetve a megnevezés Megtekintve: formává alakítása:
+\NewBibliographyString{urlseen}
+\DefineBibliographyStrings{english}{
+urlseen = {Megtekintve\addcolon\space}
+}
+\DeclareFieldFormat{urldate}{\addspace\bibstring{urlseen}\space#1}
+%AZ URL MEGTEKINTÉSÉNEK DÁTUMÁNAK FORMÁZÁSA:
+
+
+
+%a dolgozat kezdete:
+
+\begin{document}
+
+%a sorkizárás beállítása: 
+\justifying
+
+%a fedőlapon a Dolgozat típusának, névnek és dátumnak a beállítása (CSAK KÉZI POZICIONÁLÁST TUDTAM MEGCSINÁLNI):
+%A nevet és a dátumot a név és a dátum helyére kell behelyettesíteni!
+
+\pagenumbering{gobble} 
+
+\begin{center}
+\vspace*{2cm}
+\LARGE
+\thesistype
+\end{center}
+
+\begin{textblock*}{20cm}(10cm, 17.5cm)
+név
+\end{textblock*}
+
+\begin{textblock*}{20cm}(10cm, 18cm)
+dátum
+\end{textblock*}
+
+
+\newpage
+
+
+\pagenumbering{gobble}
+
+%A címoldal formázása a cím hosszúsága, témavezetők száma miatt javításra szorulhat, ekkor az optimális pozicionálás eltérhet attól, ami lent be van állítva!
+\begin{center}
+\vspace*{0.5cm}
+\unianddepartment\\
+\vspace{2cm}
+\begin{center}
+\includegraphics[width=5cm]{logo.jpg}
+\end{center}
+\vspace{2cm}
+\huge
+\thesistitle\\
+\vspace{2cm}
+\normalsize
+\student\\
+\vspace{0.8cm}
+\teacher\\
+\end{center}
+
+
+\newpage
+
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+%A tartalomjegyzék mélységét 3-ra állítottam, de igény szerint ez változtatható!
+%a második szögletes zárójelben a szám a következő mélységet jelenti...
+\setcounter{tocdepth}{3}
+\tableofcontents
+
+
+\newpage
+ 
+\section*{Rövidítések jegyzéke}
+%A rövidítések jegyzéke:
+%A rövidítések jegyzékét egy táblázatként hozzuk létre, a második oszlop távolsága szükség szerint módosítható:
+\begin{tabular}{lp{0.2cm}l}
+%Itt következnek a rövidítések, a jelentés &&-el elválasztva, a sorok pedig \\-el elválasztva:
+pl. && Például \\
+ua. && Ugyanaz
+\end{tabular}
+\newpage
+
+
+%Innentől következik a dolgozat feltöltése:
+\chapter{Első fejezet}
+\section{Első rész}
+Itt a megfelelő szöveget be kell helyettesíteni \parencite{madeuparticle}...
+Több szerző esetén ez a helyzet \parencite{kettoszerzo}, illetve ez \parencite{haromszerzo}, az első újra \parencite{masodik}...
+Ha többet szeretnék egyszerre \parencite{kettoszerzo, madeuparticle}...
+Amennyiben nincs szerző, a következőt láthatjuk \parencite{noauthor}...
+
+\chapter{Második fejezet}
+\section{Első rész}
+És így tovább \parencite{madeupbook}...
+Kettő (\citeyear{madeupbook}) pedig megmutatta, hogy...
+
+\section{Második rész}
+Egy konferenciakötet következik \parencite{conf}, ugyanez, de az előadásra hivatkozva \parencite{inconf}...
+Nem maradhat el a könyvfejezet sem \parencite{inbook}...
+Könyv melynek szerkesztői vannak \parencite{editbook}, illetve ilyen könyv egy fejezete \parencite{editinbook}...
+
+
+\newpage
+
+%Amennyiben a másfeles sorköz marad a lent beállított szimpla helyett akkor a \begin-nel és \end-del kezdődő sorokat ki kell törölni
+\begin{SingleSpace}
+\printbibliography[title={Irodalom}]
+\end{SingleSpace}
+
+\newpage
+
+%Köszönetnyilvánítás, amennyiben kimarad ezt a részt ki kell törölni, vagy kikommentelni:
+\vspace*{0.5cm}
+\begin{center}
+\huge
+Köszönetnyilvánítás
+\end{center}
+\vspace{1cm}
+Köszönöm mindenkinek...
+
+
+\end{document}
